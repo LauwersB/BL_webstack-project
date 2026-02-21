@@ -1,0 +1,24 @@
+body {
+        background-color: hotpink;
+        /* Maak van de body een flex-container */
+        display: flex;
+        /* Zet de elementen onder elkaar in plaats van naast elkaar */
+        flex-direction: column;
+        /* Centreer horizontaal */
+        align-items: center;
+        /* Centreer verticaal */
+        justify-content: center;
+        /* Zorg dat de body het hele scherm vult */
+        height: 100vh;
+        margin: 0;
+        font-family: sans-serif;
+      }
+
+      /* Optioneel: styling voor de tekstvakken */
+      .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        text-align: center;
+      }

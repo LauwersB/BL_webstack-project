@@ -4,21 +4,41 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Milestone 2</title>
+    <link rel="stylesheet" href="style.css">
+    <title>Milestone 2 - BL</title>
   </head>
   <body>
     <h1><span id="user">Loading...</span> has reached milestone 2!</h1>
+    <p>Connected to API Container: <span id="container-id">Searching...</span></p>
 
     <script>
-      // fetch user from API
-      fetch("http://<api endpoint here>/user")
-        .then((res) => res.json())
-        .then((data) => {
-          // get user name
-          const user = data.name;
-          // display user name
-          document.getElementById("user").innerText = user;
-        });
+      const userElement = document.getElementById("user");
+      const containerElement = document.getElementById("container-id");
+
+      // We maken één herbruikbare functie
+      function updatePage() {
+        fetch("http://localhost:8000/user")
+          .then((res) => {
+            if (!res.ok) throw new Error("API not reachable");
+            return res.json();
+          })
+          .then((data) => {
+            // Update de naam
+            userElement.innerText = data.name || "User not found";
+            // Update het container ID (voor je opdrachtpunten!)
+            containerElement.innerText = data.container_id || "Unknown";
+          })
+          .catch((err) => {
+            console.error("Fetch error:", err);
+            userElement.innerText = "Error loading data";
+          });
+      }
+
+      // Voer direct uit bij laden
+      updatePage();
+
+      // Check elke 5 seconden voor de "automatische" verandering
+      setInterval(updatePage, 5000);
     </script>
   </body>
 </html>

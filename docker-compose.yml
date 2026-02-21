@@ -1,0 +1,45 @@
+services:
+  # Database Service
+  bl_webstack-db:
+    image: mariadb:latest
+    container_name: bl-mariadb
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${WEBSTACK_DB_NAME}
+      - MYSQL_USER=${WEBSTACK_DB_USER}
+      - MYSQL_PASSWORD=${WEBSTACK_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${WEBSTACK_DB_ROOT_PASSWORD}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # API Service (FastAPI)
+  bl_webstack-api:
+    build: ./api
+    container_name: bl-fastapi
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - bl_webstack-db
+    environment:
+      - WEBSTACK_DB_HOST=BL_webstack-db
+      - WEBSTACK_DB_NAME=${WEBSTACK_DB_NAME}
+      - WEBSTACK_DB_USER=${WEBSTACK_DB_USER}
+      - WEBSTACK_DB_PASSWORD=${WEBSTACK_DB_PASSWORD}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+
+  # Frontend Service (Lighttpd)
+  bl_webstack-frontend:
+    image: sebp/lighttpd
+    container_name: bl-lighttpd
+    restart: always
+    # CRUCIAAL: Voeg deze twee regels toe om de log-error te stoppen
+    stdin_open: true
+    tty: true
+    ports:
+      - "8080:80"
+    depends_on:
+      - bl_webstack-api
+    volumes:
+      # Mount de hele frontend MAP naar de htdocs MAP
+      - ./frontend:/var/www/localhost/htdocs
