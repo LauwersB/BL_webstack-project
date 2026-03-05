@@ -22,9 +22,15 @@ app.add_middleware(
 @app.get("/user")
 def get_user():
     container_id = socket.gethostname()
+    print(f"Aanvraag ontvangen op container: {container_id}") # Dit verschijnt in de logs
     try:
+        print(f"Verbinding maken met host: {db_host}")
         conn = mysql.connector.connect(
-            host=db_host, user=username, password=password, database=db_name
+            host=db_host, 
+            user=username, 
+            password=password, 
+            database=db_name,
+            connect_timeout=5 # Voorkom oneindig hangen
         )
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT name FROM users LIMIT 1")
@@ -33,14 +39,12 @@ def get_user():
         conn.close()
 
         return {
-            "name": result["name"] if result else "Geen gebruiker",
+            "name": result["name"] if result else "Geen gebruiker gevonden",
             "container_id": container_id
         }
     except Exception as e:
-        return {"error": str(e), "container_id": container_id}
-
-
-from pydantic import BaseModel
+        print(f"DATABASE FOUT: {str(e)}") # Dit MOETEN we zien in de logs
+        return {"error": "Database onbereikbaar", "details": str(e), "container_id": container_id}
 
 
 # Dit model definieert wat Postman moet sturen

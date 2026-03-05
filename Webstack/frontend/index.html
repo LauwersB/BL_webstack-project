@@ -10,6 +10,10 @@
   <body>
     <h1><span id="user">Loading...</span> has reached milestone 2!</h1>
     <p>Connected to API Container: <span id="container-id">Searching...</span></p>
+    <div class="update-container">
+      <input type="text" id="newName" placeholder="Voer nieuwe naam in">
+      <button onclick="sendUpdate()">Naam Bijwerken</button>
+    </div>
 
     <script>
       const userElement = document.getElementById("user");
@@ -17,7 +21,7 @@
 
       // We maken één herbruikbare functie
       function updatePage() {
-        fetch("http://localhost:8000/user")
+        fetch("/api/user")
           .then((res) => {
             if (!res.ok) throw new Error("API not reachable");
             return res.json();
@@ -33,6 +37,25 @@
             userElement.innerText = "Error loading data";
           });
       }
+
+      function sendUpdate() {
+        const nameInput = document.getElementById('newName').value;
+        
+        fetch("/api/user/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: nameInput })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            alert("Naam succesvol gewijzigd naar: " + data.updated_to);
+            location.reload(); // De automatische refresh na wijziging
+          } else {
+            alert("Fout: " + data.error);
+          }
+        });
+  }
 
       // Voer direct uit bij laden
       updatePage();

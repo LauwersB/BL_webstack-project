@@ -2,7 +2,6 @@ services:
   # Database Service
   bl_webstack-db:
     image: mariadb:latest
-    container_name: bl-mariadb
     restart: always
     environment:
       - MYSQL_DATABASE=${WEBSTACK_DB_NAME}
@@ -15,7 +14,6 @@ services:
   # API Service (FastAPI)
   bl_webstack-api:
     build: ./api
-    container_name: bl-fastapi
     restart: always
     ports:
       - "8000:8000"
@@ -31,13 +29,14 @@ services:
   # Frontend Service (Lighttpd)
   bl_webstack-frontend:
     image: sebp/lighttpd
-    container_name: bl-lighttpd
+    deploy:
+      replicas: 3
     restart: always
     # CRUCIAAL: Voeg deze twee regels toe om de log-error te stoppen
     stdin_open: true
     tty: true
     ports:
-      - "8080:80"
+      - "8080-8082:80"
     depends_on:
       - bl_webstack-api
     volumes:
