@@ -1,0 +1,25 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cert-manager-webhook-duckdns:solve
+rules:
+  - apiGroups:
+      - acme.webhook.duckdns.org
+    resources:
+      - '*'
+    verbs:
+      - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-manager-webhook-duckdns:solve
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-webhook-duckdns:solve
+subjects:
+  - apiGroup: ""
+    kind: ServiceAccount
+    name: cert-manager
+    namespace: cert-manager

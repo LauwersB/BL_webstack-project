@@ -31,14 +31,9 @@ metadata:
   name: api-ingress
   namespace: project-webstack
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
-  tls:
-  - hosts:
-    - api.bl-webstack.duckdns.org
-    secretName: api-tls
   rules:
   - host: api.bl-webstack.duckdns.org
     http:
