@@ -5,6 +5,11 @@ metadata:
   namespace: project-webstack
 spec:
   replicas: 2
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: frontend
@@ -15,8 +20,8 @@ spec:
     spec:
       containers:
       - name: frontend-container
-        image: bl-frontend:v2
-        imagePullPolicy: Never
+        image: lauwersb/bl-frontend:v4
+        imagePullPolicy: Always
         stdin: true
         tty: true
         ports:

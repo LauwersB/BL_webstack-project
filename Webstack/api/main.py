@@ -1,8 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import Gauge, Counter, generate_latest, CONTENT_TYPE_LATEST
 import mysql.connector
 import os
 import socket
+import time
 from pydantic import BaseModel
 from config import db_host, db_name, username, password, cors_origins
 
@@ -22,16 +24,17 @@ app.add_middleware(
 @app.get("/user")
 def get_user():
     container_id = socket.gethostname()
-    print(f"Aanvraag ontvangen op container: {container_id}") # Dit verschijnt in de logs
+    start_time = time.time()
+    REQUEST_COUNT.inc()
+    
     try:
-        print(f"Verbinding maken met host: {db_host}")
         conn = mysql.connector.connect(
-            host=db_host, 
-            user=username, 
-            password=password, 
-            database=db_name,
-            connect_timeout=5 # Voorkom oneindig hangen
+            host=db_host, user=username, password=password, 
+            database=db_name, connect_timeout=5
         )
+        # Update metric met de werkelijke latency
+        db_latency.set(time.time() - start_time)
+        
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT name FROM users LIMIT 1")
         result = cursor.fetchone()
@@ -43,7 +46,7 @@ def get_user():
             "container_id": container_id
         }
     except Exception as e:
-        print(f"DATABASE FOUT: {str(e)}") # Dit MOETEN we zien in de logs
+        db_latency.set(-1) # Foutwaarde voor monitoring
         return {"error": "Database onbereikbaar", "details": str(e), "container_id": container_id}
 
 
@@ -75,3 +78,15 @@ def update_user(user_data: UserUpdate):
         return {"status": "success", "updated_to": user_data.name}
     except Exception as e:
         return {"error": str(e)}
+    
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+db_latency = Gauge('db_connection_latency_seconds', 'Tijd in seconden voor DB connectie')
+REQUEST_COUNT = Counter('api_requests_total', 'Totaal aantal verzoeken naar de API')
+
+@app.get("/metrics")
+def get_metrics():
+    # Dit endpoint wordt door Prometheus opgeroepen
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
