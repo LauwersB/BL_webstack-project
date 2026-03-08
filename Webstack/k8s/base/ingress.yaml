@@ -30,18 +30,16 @@ kind: Ingress
 metadata:
   name: api-ingress
   namespace: project-webstack
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
   - host: api.bl-webstack.duckdns.org
     http:
       paths:
-      - path: /api(/|$)(.*)
-        pathType: ImplementationSpecific
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: api-service
             port:
-              number: 8000 
+              number: 8000
