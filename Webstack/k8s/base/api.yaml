@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: api-container
-        image: lauwersb/bl-api:v4
+        image: lauwersb/bl-api:VERSION_PLACEHOLDER
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
