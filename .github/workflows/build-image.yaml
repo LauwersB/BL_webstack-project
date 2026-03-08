@@ -55,6 +55,6 @@ jobs:
           # Commit de wijziging terug naar je repo zodat ArgoCD het ziet
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add webstack/k8s/base/api.yaml webstack/k8s/base/frontend.yaml
+          git add Webstack/k8s/base/api.yaml Webstack/k8s/base/frontend.yaml
           git commit -m "Update images to version ${{ github.sha }}"
           git push
