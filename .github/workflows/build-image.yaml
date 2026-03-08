@@ -49,8 +49,8 @@ jobs:
       - name: Update Kubernetes manifest
         run: |
           # Vervang VERSION_PLACEHOLDER door de huidige commit SHA (kort)
-          sed -i "s|VERSION_PLACEHOLDER|${{ github.sha }}|g" webstack/k8s/base/api.yaml
-          sed -i "s|VERSION_PLACEHOLDER|${{ github.sha }}|g" webstack/k8s/base/frontend.yaml
+          sed -i "s|VERSION_PLACEHOLDER|${{ github.sha }}|g" Webstack/k8s/base/api.yaml
+          sed -i "s|VERSION_PLACEHOLDER|${{ github.sha }}|g" Webstack/k8s/base/frontend.yaml
           
           # Commit de wijziging terug naar je repo zodat ArgoCD het ziet
           git config --global user.name "GitHub Action"
