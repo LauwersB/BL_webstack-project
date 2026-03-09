@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 .vagrant/
 *.log
+Webstack/k8s/cert-manager/lego/
