@@ -10,10 +10,11 @@ on:
 
 jobs:
   build_api:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository code into runner
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build the Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/bl-api:${{ github.sha }} ./Webstack/api/
@@ -28,11 +29,15 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/bl-api:${{ github.sha }}
 
   build_frontend:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     needs: build_api
     steps:
       - name: Checkout repository code into runner
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
 
       - name: Build the Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/bl-frontend:${{ github.sha }} ./Webstack/frontend/
@@ -48,9 +53,9 @@ jobs:
 
       - name: Update Kubernetes manifest
         run: |
-          # Vervang de versie-placeholders
-          sed -i "s|VERSION_PLACEHOLDER|${{ github.sha }}|g" Webstack/k8s/base/api.yaml
-          sed -i "s|VERSION_PLACEHOLDER|${{ github.sha }}|g" Webstack/k8s/base/frontend.yaml
+          # Update image tags op basis van de huidige commit SHA
+          sed -i -E "s|(^[[:space:]]*image:[[:space:]]*.+/bl-api:).*|\\1${{ github.sha }}|" Webstack/k8s/base/api.yaml
+          sed -i -E "s|(^[[:space:]]*image:[[:space:]]*.+/bl-frontend:).*|\\1${{ github.sha }}|" Webstack/k8s/base/frontend.yaml
           
           # Controleer of er daadwerkelijk wijzigingen zijn
           if [[ -n $(git status --porcelain) ]]; then
@@ -58,7 +63,7 @@ jobs:
             git config --global user.email "action@github.com"
             git add Webstack/k8s/base/api.yaml Webstack/k8s/base/frontend.yaml
             git commit -m "Update images to version ${{ github.sha }}"
-            git push
+            git push origin HEAD:main
           else
             echo "Geen wijzigingen in de manifest-bestanden, overslaan van commit/push."
           fi
