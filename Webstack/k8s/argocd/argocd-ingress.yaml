@@ -1,4 +1,3 @@
-# ingress voor argocd
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -9,12 +8,8 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   ingressClassName: nginx
-  tls:
-  - hosts:
-    - argocd.bl-webstack.duckdns.org
-    secretName: argocd-tls
   rules:
-  - host: argocd.bl-webstack.duckdns.org
+  - host: argocd.local  
     http:
       paths:
       - path: /

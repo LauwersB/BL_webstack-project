@@ -1,31 +1,39 @@
+# 1. De Ingress voor de Frontend
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: webstack-ingress
+  name: frontend-ingress
+  namespace: project-webstack
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+---
+# 2. De Ingress voor de API
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
   namespace: project-webstack
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
-  tls:
-  - hosts:
-    - web.bl-webstack.duckdns.org
-    secretName: web-tls
   rules:
-  - host: web.bl-webstack.duckdns.org
-    http:
+  - http:
       paths:
-      - path: /api(/|$)(.*)    # API regel MOET bovenaan staan
+      - path: /api(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
           service:
             name: api-service
             port:
               number: 8000
-      - path: /()(.*)          # Frontend vangt de rest op
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: frontend-service
-            port:
-              number: 80

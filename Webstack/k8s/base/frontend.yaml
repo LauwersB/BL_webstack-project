@@ -35,9 +35,9 @@ metadata:
 spec:
   selector:
     app: frontend
-  ports:
+    ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30080 # We gebruiken een NodePort zodat de VM erbij kan
+      nodePort: 30080 # NodePort voor even te testen zonder ingress
   type: NodePort
