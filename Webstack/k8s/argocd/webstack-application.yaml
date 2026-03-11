@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: webstack
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    namespace: project-webstack
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/LauwersB/BL_webstack-project.git
+    targetRevision: main
+    path: Webstack/k8s
+    directory:
+      recurse: true
+      exclude: "{kind-config.yaml,base/project-namespace.yaml}"
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
