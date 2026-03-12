@@ -4,8 +4,14 @@ kind: Ingress
 metadata:
   name: frontend-ingress
   namespace: project-webstack
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - web.lauwersb.duckdns.org
+    secretName: webstack-tls
   rules:
   - host: web.lauwersb.duckdns.org
     http:
@@ -25,10 +31,15 @@ metadata:
   name: api-ingress
   namespace: project-webstack
   annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - web.lauwersb.duckdns.org
+    secretName: webstack-tls
   rules:
   - host: web.lauwersb.duckdns.org
     http:

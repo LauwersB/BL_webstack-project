@@ -3,8 +3,14 @@ kind: Ingress
 metadata:
   name: grafana-ingress
   namespace: monitoring 
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - grafana.lauwersb.duckdns.org
+    secretName: monitoring-tls
   rules:
   - host: grafana.lauwersb.duckdns.org  
     http:
