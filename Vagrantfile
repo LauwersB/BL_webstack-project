@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
 
   config.trigger.before :halt do |trigger|
     trigger.info = "Downscalen monitoring en argocd deployments naar 0 replicas..."
+    trigger.on_error = :continue
     trigger.run_remote = {
       inline: <<-SHELL
         if ! command -v kubectl >/dev/null 2>&1; then
