@@ -45,7 +45,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.trigger.after :up do |trigger|
-    trigger.info = "Wacht 180 seconden en schaal monitoring/argocd deployments naar 1 replica..."
+    trigger.info = "Wacht 120 seconden en schaal monitoring/argocd deployments naar 1 replica..."
     trigger.run_remote = {
       inline: <<-SHELL
         if ! command -v kubectl >/dev/null 2>&1; then
@@ -53,8 +53,8 @@ Vagrant.configure("2") do |config|
           exit 0
         fi
 
-        echo "[trigger:up] Wacht 180 seconden voor upscaling..."
-        sleep 180
+        echo "[trigger:up] Wacht 120 seconden voor upscaling..."
+        sleep 120
 
         echo "[trigger:up] Upscalen monitoring deployments naar 1..."
         if kubectl scale deployment -n monitoring --all --replicas=1; then
@@ -63,8 +63,8 @@ Vagrant.configure("2") do |config|
           echo "[trigger:up] monitoring upscaling mislukt."
         fi
 
-        echo "[trigger:up] Wacht 30 seconden voor argocd upscaling..."
-        sleep 30
+        echo "[trigger:up] Wacht 40 seconden voor argocd upscaling..."
+        sleep 40
 
         echo "[trigger:up] Upscalen argocd deployments naar 1..."
         if kubectl scale deployment -n argocd --all --replicas=1; then

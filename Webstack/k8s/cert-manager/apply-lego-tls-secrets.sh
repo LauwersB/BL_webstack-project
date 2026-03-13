@@ -33,7 +33,6 @@ apply_tls_secret() {
 
 apply_tls_secret project-webstack webstack-tls
 apply_tls_secret monitoring monitoring-tls
-# Prepared for future argocd ingress TLS termination if needed.
 apply_tls_secret argocd argocd-tls
 
 echo "TLS secrets applied successfully."
