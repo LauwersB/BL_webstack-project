@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: frontend-container
-        image: lauwersb/bl-frontend:bfb321762c6fc93c2a3366cc12489b71ae267b25
+        image: lauwersb/bl-frontend:afa41094b5b2ea68263fcc47addcecc25f4d6861
         imagePullPolicy: Always
         stdin: true
         tty: true
